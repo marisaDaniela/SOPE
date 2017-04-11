@@ -1,3 +1,3 @@
 # SOPE_Projects
 
-Este repositório contém o projeto de SOPE.
+Repositório para a unidade curricular SOPE.  
