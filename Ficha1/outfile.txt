@@ -1,0 +1,2 @@
+infile.txt
+Ola. este e o conteudo de infile txt :) 
