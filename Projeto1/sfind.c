@@ -4,9 +4,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <unistd.h> 
 
 
-void functionCTRL_Z()
+void sigint_handler(int signo)
 {	
 	char a;
 	
@@ -14,14 +16,25 @@ void functionCTRL_Z()
 	scanf("%c", &a);
 	
 	if( a == 'y' || a == 'Y'){
-		//TODO
+		exit(1);
 	} 
 	else if( a== 'n' || a == 'N'){
-		//TODO
+		return;
 	}
 }
 
 int main(int argc, char* argv[]){
+
+	struct sigaction action;
+ 	// prepare the 'sigaction struct'
+  
+  	action.sa_handler = sigint_handler;
+ 	sigemptyset(&action.sa_mask);
+ 	action.sa_flags = 0;
+ 
+ 	// install the handler
+ 	sigaction(SIGINT,&action,NULL); 
+ 	
 	if(argc < 2)
 	{
 		printf("Wrong number of parameters!\n");
@@ -31,7 +44,7 @@ int main(int argc, char* argv[]){
 	//implementar opçoes: -name string, -type c: f-ficheiro normal, d-diretorio, l-ligacao, -perm mode
 	//acoesToExecute: -print(mostra no ecra os ficheiros encontrados), -delete(apaga os ficheiros), -exec cmd
 	
-	char * path = argv[1];
+	char * path = argv[1];  // caminho atual
     char * option = argv[2]; //-name, -type
 	char * filename = argv[3];
 	char * actionToExecute = argv[4]; //print, delete, exec cmd
