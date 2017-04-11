@@ -24,20 +24,23 @@ void functionCTRL_Z()
 int main(int argc, char* argv[]){
 	if(argc < 2)
 	{
-		printf("Numero errado de parametros!\n");
+		printf("Wrong number of parameters!\n");
 		exit(1);
 	}
 	
+	//implementar opçoes: -name string, -type c: f-ficheiro normal, d-diretorio, l-ligacao, -perm mode
+	//acoesToExecute: -print(mostra no ecra os ficheiros encontrados), -delete(apaga os ficheiros), -exec cmd
 	
 	char * path = argv[1];
-    char * option = argv[2];
+    char * option = argv[2]; //-name, -type
 	char * filename = argv[3];
-	char * actionToExecute = argv[4];
+	char * actionToExecute = argv[4]; //print, delete, exec cmd
 	
 	
 	int f1;
 	
-	if((strncmp(option, "-name", 5)) == 0) {
+	if((strncmp(option, "-name", 5)) == 0) 
+	{
 		if((f1 = open(filename, O_RDONLY) == -1))
 		{
 			perror(option);
@@ -47,20 +50,25 @@ int main(int argc, char* argv[]){
 		{
 			if((strncmp(actionToExecute, "-delete", 7))==0)
 			{
+				//TODO: elimina os ficheiros
 			}
 			else if((strncmp(actionToExecute, "-print", 6))==0)
 			{
+				//TODO: imprime na consola os ficheiros que encontrou
 			}
 			else if((strncmp(actionToExecute, "-exec", 5))==0)
 			{
+				//TODO: executa o comando encontrado
 			}
 		}
 	}
-	else if((strncmp(option, "-perm", 5)==0)
+	else if((strncmp(option, "-perm", 5))==0)
 	{
+		//permissoes do ficheiro
 	}
-	else if((strncmp(option, "-type", 5)==0)
+	else if((strncmp(option, "-type", 5))==0)
 	{
+		//ficheiro normal, diretorio, ligacao
 	}
 	
 	return 0;
