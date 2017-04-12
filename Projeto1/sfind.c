@@ -6,7 +6,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h> 
+#include <dirent.h>
+#include <unistd.h>
 
+char cwd[500];
 
 void sigint_handler(int signo)
 {	
@@ -23,8 +26,22 @@ void sigint_handler(int signo)
 	}
 }
 
-int main(int argc, char* argv[]){
+//Cenas para procurar o diretorio:
+char * findDir(char * path){
+	getcwd(cwd, sizeof(cwd));
+	if(path[1]=='.'){
+		int i;
+		for(i = strlen(cwd)-1; cwd[i]!='/'; i--);{
+			cwd[i] = '\0';
+		}
+		
+	}
+	return cwd;
+}
 
+
+
+int main(int argc, char* argv[]){
 	struct sigaction action;
  	// prepare the 'sigaction struct'
   
@@ -58,16 +75,17 @@ int main(int argc, char* argv[]){
 		{
 			perror(option);
 			exit(1);
-		}
-		else
+		
+}		else
 		{
 			if((strncmp(actionToExecute, "-delete", 7))==0)
 			{
-				//TODO: elimina os ficheiros
+				remove(filename);
 			}
 			else if((strncmp(actionToExecute, "-print", 6))==0)
 			{
 				//TODO: imprime na consola os ficheiros que encontrou
+
 			}
 			else if((strncmp(actionToExecute, "-exec", 5))==0)
 			{
