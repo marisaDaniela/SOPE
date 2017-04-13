@@ -132,8 +132,8 @@ void searchByName(const char* path,const char* filename,const char* actionToExec
 			filenameInDir = pp->d_name;
 			strcat(fullPathFile, filenameInDir);
 
-			//if (strcmp(filenameInDir, filename) == 0)	// verificar se o nome de um ficheiro no diretorio corresponde ao procurado
-			//{
+			if (strcmp(filenameInDir, filename) == 0)	// verificar se o nome de um ficheiro no diretorio corresponde ao procurado
+			{
 				if (actionToExecute != NULL)
 				{
 					executeAction(fullPathFile, filename, actionToExecute);
@@ -142,7 +142,7 @@ void searchByName(const char* path,const char* filename,const char* actionToExec
 				{
 					printf("File found\n");
 				}
-			//}
+			}
 		}
 		(void) closedir (p);
 	}
