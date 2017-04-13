@@ -7,7 +7,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include "sfind.h"
-//#include <fcntl.h>
 
 int main(int argc, char* argv[])
 {
@@ -38,13 +37,11 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	int f1;
-
 	if (argc == 2)
 	{
 		printAllFilesInDir(argv[1]);
 	}
-	else if(argc >=4)
+	else if(argc >=3)
 	{
 		if ((strncmp(option, "-name", 5)) == 0)
 		{
@@ -65,9 +62,6 @@ int main(int argc, char* argv[])
 			printf("Invalid option: %s", option);
 		}
 	}
-
-	printf("\nI got executed :D\n");
-
 	return 0;
 }
 
@@ -102,12 +96,15 @@ void printAllFilesInDir(const char* path)
 	if (p != NULL)
 	{
 		while ((pp = readdir (p))!=NULL)
-		{
+		{ 
+			printf("%s/", path);
 			filenameInDir = pp->d_name;
 			printf("%s\n", filenameInDir);
 		}
 		(void) closedir (p);
 	}
+	else
+		printf("sfind: \"%s\" : File or directory not found\n", path);
 }
 
 /* Recursive */
@@ -135,8 +132,8 @@ void searchByName(const char* path,const char* filename,const char* actionToExec
 			filenameInDir = pp->d_name;
 			strcat(fullPathFile, filenameInDir);
 
-			if (strcmp(filenameInDir, filename) == 0)	// verificar se o nome de um ficheiro no diretorio corresponde ao procurado
-			{
+			//if (strcmp(filenameInDir, filename) == 0)	// verificar se o nome de um ficheiro no diretorio corresponde ao procurado
+			//{
 				if (actionToExecute != NULL)
 				{
 					executeAction(fullPathFile, filename, actionToExecute);
@@ -145,7 +142,7 @@ void searchByName(const char* path,const char* filename,const char* actionToExec
 				{
 					printf("File found\n");
 				}
-			}
+			//}
 		}
 		(void) closedir (p);
 	}
@@ -351,11 +348,11 @@ void executeAction(const char* path,const char* filename,const char* actionToExe
 	}
 	else if ((strncmp(actionToExecute, "-print", 6))==0)
 	{
-		printf("%s\n", filename);
+		printf("%s/%s\n",path, filename);
 	}
 	else if ((strncmp(actionToExecute, "-exec", 5))==0)
 	{
-		int status = system(strcat("./",filename));
+		system(strcat("./",filename));
 	}
 	else
 		exit(1);

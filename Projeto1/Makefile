@@ -3,7 +3,10 @@
 CC = gcc
 
 PROG = sfind
-SRCS = sfind.c
+src: sfind.c
+	cc -Wall sfind.c -o sfind
+clean:
+	rm -f sfind
 
 CFLAGS = -Wall
 
