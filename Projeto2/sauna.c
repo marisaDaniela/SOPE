@@ -1,27 +1,9 @@
 #include <stdio.h>
 
-int main(int argc, char** argv) {
-
-	if(argc != 3){
-		printf("%s\n");
-
+int main(int argc, char* argv[]){
+	if(argc != 2){
+		printf("Wrong number of arguments. Usage:<capacity>\n");
 	}
-	char* numRequest = argv[1];
-	char* maxUse = argv[2];
- 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	int capacity = atoi(argv[1]);
 }
