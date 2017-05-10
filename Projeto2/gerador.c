@@ -87,7 +87,15 @@ void* makeRequest(int *maxTime)
 
 void rejectedRequest()
 {
+	int fd;
 	
+        if((fd = open(FIFO_2, O_RDWR | 0_NONBLOCK)) == -1)
+        {
+            perror("Oops!!");
+            exit(1);
+        }
+        
+        // se pedidos rejeitados > 3 -> descartados; se não, fila
     
     
     
