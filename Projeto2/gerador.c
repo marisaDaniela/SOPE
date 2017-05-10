@@ -35,22 +35,25 @@ int ID = 1;
 char*  FIFO_1 = "/tmp/entrada";
 char*  FIFO_2 = "/tmp/rejeitados";
 
-typedef struct Person {
-	int id;
+typedef struct Person 
+{
+	int id; 
 	char gender;
 	int time;
 	int refusedTimes;
 } Person;
 
-typedef struct Args {
+typedef struct Args 
+{
 	char * charpointer;
 	clock_t start;
 	struct tms t; 
 } Args;
 
-//Gerar pessoas aleatoriamente
+// Gerar pedidos aleatoriamente
 
-Person* generatePerson(int maxTime) {
+Person* generatePerson(int maxTime) 
+{
 	Person* person = malloc(sizeof(Person));
 
 	person->id = ID++;
@@ -58,12 +61,12 @@ Person* generatePerson(int maxTime) {
 	person->time = rand() % maxTime + 1;
 	person->refusedTimes = 0;
 
-
 	return person;
 }
 
 //Gerar pedidos aleatorios e apresenta-los a sauna, i think 
-void* makeRequest(int *maxTime){
+void* makeRequest(int *maxTime)
+{
 	int fd; 
 	int value = *(int *) maxTime; 
 	if(mkfifo(FIFO_1, O_RDWR ) != 0){ // nao sei se vao ser estas as permissoes do fifo de entrada 
@@ -82,17 +85,27 @@ void* makeRequest(int *maxTime){
 }
 
 
-void rejectedRequest(){
-	//TODO
+void rejectedRequest()
+{
+	
+    
+    
+    
+    
+    
+    
+    
 
 } 
 
 
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
 
-	if(argc != 3){
-		printf("Wrong number of arguments. Usage:<numRequests><maxTime>\n");
+	if(argc != 3)
+        {
+            printf("Wrong number of arguments! Usage: <numRequests> <maxTime>\n");
 	}
 
     int numRequests = atoi(argv[1]); //numero de pedidos

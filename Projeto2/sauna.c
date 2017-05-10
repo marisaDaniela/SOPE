@@ -10,10 +10,12 @@
 #include <errno.h>
 #include <pthread.h>
 
+#define MAX_MSG_LEN 20
+
 //SAUNA
 	/*
 	FIFO
-		/tmp.entrada  recebe e encaminha para lugares vagos
+		/tmp.entrada recebe e encaminha para lugares vagos
 		se nao forem aceites:
 			/tmp/rejeitados
 		se forem do mesmo genero
@@ -37,12 +39,15 @@
 char*  FIFO_1 = "/tmp/entrada";
 char*  FIFO_2 = "/tmp/rejeitados";
 
-int main(int argc, char * argv[]){
+void *receivedRequest(void *threadId);
 
-	if(argc != 2){
-    	printf("Wrong number of arguments. Usage:<numPlaces>\n");
-   	 	exit(1);
-   	 }
+int main(int argc, char * argv[])
+{
+	if(argc != 2)
+        {
+            printf("Wrong number of arguments! Usage: <numPlaces>\n");
+            exit(1);
+        }
 
    	/*clock_t start; 
  	struct tms t; 
@@ -66,9 +71,66 @@ int main(int argc, char * argv[]){
 	pthread_create(&tid[i], NULL, write_person, (Args) write);
 	// pthread_create(&tid[i+1], NULL, process_person,           //a thread responsavel por gerir entrada de clientes na sauna
 	
-
-   	int numPlaces = atoi(argv[1]);
-   	*/
-
-
+        */
+   	
+        int numPlaces = atoi(argv[1]);
+        
+        pthread_t tid[numPlaces];
+        int rc, t; // return code from pthread_create
+        for(t=1; t<=numPlaces; t++) 
+        {
+            rc = pthread_create(&tid[t-1], NULL, receivedRequest, (void *)t);
+            if(rc)
+            {
+                printf("ERRO; return code from pthread_create() if %d\n", rc);
+                exit(1);
+            }
+        }
+        pthread_exit(NULL);
 }
+
+void *receivedRequest(void *threadId) 
+{
+    int fd;
+    char str[MAX_MSG_LEN];
+    
+    if ((fd = open(FIFO_1, O_RDONLY | O_NONBLOCK)) == -1)
+    {
+        perror("Oops!!");
+        exit(1);        
+    }
+    
+    read(fd, str, MAX_MSG_LEN); //?
+    
+    close(fd);
+  
+    //inc
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
