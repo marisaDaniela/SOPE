@@ -62,9 +62,31 @@ Person* generatePerson(int maxTime) {
 	return person;
 }
 
+//Gerar pedidos aleatorios e apresenta-los a sauna, i think 
+void* makeRequest(int *maxTime){
+	int fd; 
+	int value = *(int *) maxTime; 
+	if(mkfifo(FIFO_1, O_RDWR ) != 0){ // nao sei se vao ser estas as permissoes do fifo de entrada 
+		perror("Can't create FIFO 'tmp/entrada'");
+		exit(1);
+		}	
+		
+	if((fd = open(FIFO_1, O_WRONLY | O_NONBLOCK))==-1){
+		perror("Oops!!");
+		exit(1);
+		}
+	
+	Person * p = generatePerson(value);
+
+	write(fd, p, sizeof(p));
+}
+
+
 void rejectedRequest(){
 	//TODO
+
 } 
+
 
 
 int main(int argc, char* argv[]){
@@ -77,7 +99,8 @@ int main(int argc, char* argv[]){
 	int maxTime = atof(argv[2]); //max duracao de pedido
 
 	pthread_t tid1, tid2;
-	pthread_create(&tid1, NULL, generatePerson, NULL); //thread1
+
+	pthread_create(&tid1, NULL, makeRequest, &maxTime); //thread1
 	pthread_create(&tid2, NULL, rejectedRequest, NULL); //thread2
 
 	/*
@@ -86,20 +109,7 @@ int main(int argc, char* argv[]){
 	struct tms t = (Args) arg->t
 	*/
 
-	if(mkfifo(FIFO_1, O_RDWR ) != 0){ // nao sei se vao ser estas as permissoes do fifo de entrada 
-		perror("Can't create FIFO 'tmp/entrada");
-		exit(1);
-		}	
-		
-        int fd; 
-
-	if(fd = open(FIFO_1, O_WRONLY)==-1){
-		perror("Oops!!");
-		exit(1);
-		}
 	
-	Person * p = generatePerson(maxTime);
-	write(fd, p, sizeof(p));
 
 	//double delta = times(&t) - start;  //isto é o delta entre inicio do programa e corrente tempo para escrever no log.
 }

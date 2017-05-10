@@ -48,7 +48,7 @@ int main(int argc, char * argv[]){
  	struct tms t; 
  	long ticks; 
  	int k; 
-	start = times(&t);                       /* início da medição de tempo */ 
+	start = times(&t);                    */   /* início da medição de tempo */ 
 	/*ticks = sysconf(_SC_CLK_TCK); 
  	
 	Args* write = malloc(sizeof(Write_args));
