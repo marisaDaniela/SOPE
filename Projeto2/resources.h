@@ -13,6 +13,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
+int ID = 1;
 
 typedef struct Request
 {
@@ -20,7 +21,19 @@ typedef struct Request
 	char g; // gender (F/M)
 	int t; // duracao da utilizacao do pedido (ms)
 	int refusedTimes;
-} Resquest;
+} Request;
+
+Request* generateRequest(int t) 
+{
+	Request* r = malloc(sizeof(Request));
+
+	r->p = ID++;
+	r->g = (rand()%2) ? 'M' : 'F';
+	r->t = rand() % t + 1;
+	r->refusedTimes = 0;
+
+	return r;
+}
 
 
 
