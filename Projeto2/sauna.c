@@ -100,7 +100,13 @@ void *receivedRequest(void *threadId)
         exit(1);        
     }
     
-    read(fd, str, MAX_MSG_LEN); //?
+    while(1)
+    {
+    	if(read(fd, &str, MAX_MSG_LEN)>0)
+    	{
+    		printf("%s\n",str );
+    	} //?
+    }
     
     close(fd);
   

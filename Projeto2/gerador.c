@@ -69,7 +69,7 @@ void* makeRequest(int *maxTime)
 {
 	int fd; 
 	int value = *(int *) maxTime; 
-	if(mkfifo(FIFO_1, O_RDWR ) != 0){ // nao sei se vao ser estas as permissoes do fifo de entrada 
+	if(mkfifo(FIFO_1, O_RDWR | O_NONBLOCK ) != 0){ // nao sei se vao ser estas as permissoes do fifo de entrada 
 		perror("Can't create FIFO 'tmp/entrada'");
 		exit(1);
 		}	
@@ -89,20 +89,13 @@ void rejectedRequest()
 {
 	int fd;
 	
-        if((fd = open(FIFO_2, O_RDWR | 0_NONBLOCK)) == -1)
+        if((fd = open(FIFO_2, O_RDWR | O_NONBLOCK)) == -1)
         {
             perror("Oops!!");
             exit(1);
         }
         
         // se pedidos rejeitados > 3 -> descartados; se não, fila
-    
-    
-    
-    
-    
-    
-    
 
 } 
 
