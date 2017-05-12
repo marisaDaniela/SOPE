@@ -25,14 +25,4 @@ typedef struct
 } Request;
 
 // Vai gerar pedidos aleatorios: ex: 1 F 1 0
-Request* generateRequest(int duration) 
-{
-	Request* person = malloc(sizeof(Request));
 
-	person->p = ID++;
-	person->g = (rand()%2)? 'M' : 'F';
-	person->t = rand() % duration + 1;
-	person->refusedTimes = 0;
-
-	return person;
-}
