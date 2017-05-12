@@ -1,40 +1,38 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <time.h>
-#include <sys/wait.h>
+#include <stdio.h>
 #include <pthread.h>
-#include <semaphore.h>
-
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <sys/times.h>
+#include <errno.h>
+#include <pthread.h>
+#define TICKS_PER_SEC  60L
+#define NUM_MAX_REQ 100
+#define STATISTICS "/tmp/bal.pid"
 int ID = 1;
+char*  FIFO_1 = "/tmp/entrada";
+char*  FIFO_2 = "/tmp/rejeitados";
 
-typedef struct Request
+typedef struct 
 {
-	int p; // numero de serie do pedido 
-	char g; // gender (F/M)
-	int t; // duracao da utilizacao do pedido (ms)
+	int p; 
+	char g;
+	int t;
 	int refusedTimes;
 } Request;
 
-Request* generateRequest(int t) 
+// Vai gerar pedidos aleatorios: ex: 1 F 1 0
+Request* generateRequest(int duration) 
 {
-	Request* r = malloc(sizeof(Request));
+	Request* person = malloc(sizeof(Request));
 
-	r->p = ID++;
-	r->g = (rand()%2) ? 'M' : 'F';
-	r->t = rand() % t + 1;
-	r->refusedTimes = 0;
+	person->p = ID++;
+	person->g = (rand()%2)? 'M' : 'F';
+	person->t = rand() % duration + 1;
+	person->refusedTimes = 0;
 
-	return r;
+	return person;
 }
-
-
-
-
