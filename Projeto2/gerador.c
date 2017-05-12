@@ -4,6 +4,8 @@
 
 FILE * file;
 int DURATION;
+int DIS_M, DIS_F;
+
 // THREAD PARA GERAR PEDIDOS
 
 Request* requests[100]; // Lista para pedidos
@@ -56,7 +58,38 @@ void* thrCreateRequest(void * numRequests)
   pthread_exit(NULL);
 }
 
-// THREAD PARA ESCUTAR OS PEDIDOS REJEITADO
+// THREAD PARA ESCUTAR OS PEDIDOS REJEITADOS
+/*
+void* thrHandlerRejected()
+{
+	int fd, fd2;
+	Request * r;
+
+	if ((fd=open(FIFO_2,O_WRONLY)) !=-1)
+ 		printf("FIFO '/tmp/rejeitados' openned in O_WRONLY mode\n");
+ 	if ((fd2=open(FIFO_1,O_WRONLY)) !=-1)
+ 		printf("FIFO '/tmp/entrada' openned in O_WRONLY mode\n");
+
+  	while(read(fd, r, sizeof(Request)) != 0)
+  	{
+    	printf("REJECTED FIFO\nP: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
+
+    if (r->refusedTimes < 3)
+    {
+    	write(fd2, r, sizeof(*r));  // Volta a colocar na fila, i guess
+    }
+    else if (r->g == 'M') 
+    {
+    	DIS_M++;
+    }
+    else if(r->g == 'F')
+    {
+    	DIS_F++;
+    }
+  }
+  pthread_exit(NULL);
+
+}*/
 
 int main(int argc, char * argv[])
 {
@@ -68,15 +101,17 @@ int main(int argc, char * argv[])
 
   	if(argc != 3)
   	{
-   		printf("Wrong number of arguments. USAGE: program_name <number of requests> <max duration>\n");
+   		printf("Wrong number of arguments! Usage: %s <number of requests> <max duration>\n", argv[0]);
     	exit(1);
   	}
 	
 
 	pthread_t tid1, tid2;
 	pthread_create(&tid1, NULL, thrCreateRequest, (void*) &numRequests);
+	//pthread_create(&tid2, NULL, thrHandlerRejected, NULL);
 
 	pthread_join(tid1,NULL);
+	//pthread_join(tid2,NULL);
 
 	return 0;
 

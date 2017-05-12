@@ -2,6 +2,10 @@
 
 #define STATISTICS "/tmp/bal.pid"
 
+char SAUNA_G; // genero atual da sauna
+int CAPACITY;
+int NUMREQ = 0;
+
 // imprimir info do pedido
 
 void printRequestInfo (Request *r)
@@ -9,6 +13,30 @@ void printRequestInfo (Request *r)
 	printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
 }
 
+void putIntoSauna( Request *r)
+{
+	int fd;
+	if(CAPACITY != 0)
+	{
+		if(SAUNA_G == r->g)
+		{
+			printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
+		}
+		else
+		{
+			if ((fd=open(FIFO_2,O_WRONLY)) !=-1)
+			{
+ 				printf("FIFO '/tmp/rejeitados' openned in O_WRONLY mode\n");
+			}
+			r->refusedTimes++;
+			write(fd, r, sizeof(Request));
+		}
+	}
+	else //se a sauna estiver cheia
+	{
+		printf("FULL!");
+	}
+}
 
 /*int numParkingSpaces, openingTime, freeSpaces;*/
 clock_t start;
@@ -39,7 +67,7 @@ int toFile(int tid, int id, char gender, char* message){
 
 int main(int argc, char* argv[])
 {
-	int capacity = atoi(argv[1]); 				// Numero de lugares da sauna
+	CAPACITY = atoi(argv[1]); 				// Numero de lugares da sauna
   	int fd;			
 
   	Request *r = malloc(sizeof(Request));
@@ -49,6 +77,18 @@ int main(int argc, char* argv[])
 	  	printf("Wrong number of arguments! Usage: %s <capacity>\n", argv[0]);
 	  	exit(1);
 	}
+
+// Criacao do fifo dos rejeitados
+
+	if (mkfifo(FIFO_2,0660)<0)
+ 		if (errno==EEXIST) 
+ 			printf("FIFO '/tmp/rejeitados' already exists\n");
+ 		else 
+ 			printf("Can't create FIFO\n");
+	else 
+		printf("FIFO '/tmp/rejeitados' sucessfully created\n");
+
+// Leitura do fifo de entrada
 
 	while((fd = open(FIFO_1, O_RDONLY)) == -1)
 	{
@@ -61,11 +101,18 @@ int main(int argc, char* argv[])
 
   	while(read(fd, r, sizeof(Request)) != 0)
   	{
-    	if (r == NULL) 
+  		NUMREQ = NUMREQ+1;
+    	if (r == NULL)
+    	{
+    		printf("Fifo 'tmp/entrada' empty!");
     		exit(1);
+    	}
     	printRequestInfo(r);
-    	
+    	putIntoSauna(r);
   	}
+
+  	SAUNA_G = r->g; 
+  	
 
   	
 }
