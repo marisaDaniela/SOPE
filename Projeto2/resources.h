@@ -9,9 +9,11 @@
 #include <sys/times.h>
 #include <errno.h>
 #include <pthread.h>
+
 #define TICKS_PER_SEC  60L
 #define NUM_MAX_REQ 100
-#define STATISTICS "/tmp/bal.pid"
+
+
 int ID = 1;
 char*  FIFO_1 = "/tmp/entrada";
 char*  FIFO_2 = "/tmp/rejeitados";

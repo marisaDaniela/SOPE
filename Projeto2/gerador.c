@@ -1,7 +1,11 @@
 #include "resources.h"
 
+#define LOG_FILE  "/tmp/ger.pid"
+
+FILE * file;
 // THREAD PARA GERAR PEDIDOS
-Request* requests[100];
+
+Request* requests[100]; // Lista para pedidos
 
 void* thrCreateRequest(void * numRequests)
 {
@@ -30,6 +34,15 @@ int main(int argc, char * argv[])
 	int i;
 
 	int fd; // descritor para o fifo
+
+// Create log file
+
+	file = fopen(LOG_FILE,"w");
+	if (file == NULL)
+		printf ("Couldn't create %s file\n", LOG_FILE);
+	else
+		fprintf(file,"   inst   –   pid    –     p:    g     –    dur    –    tip   \n");
+	fclose(file);
 
 // Exemplo do professor
 

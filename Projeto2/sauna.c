@@ -58,6 +58,7 @@ int main(int argc, char* argv[])
 		}
 		sleep(1); 
   	}
+
   	while(read(fd, r, sizeof(Request)) != 0)
   	{
     	if (r == NULL) 
@@ -66,4 +67,5 @@ int main(int argc, char* argv[])
     	
   	}
 
+  	
 }
