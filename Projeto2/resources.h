@@ -27,4 +27,3 @@ typedef struct
 } Request;
 
 // Vai gerar pedidos aleatorios: ex: 1 F 1 0
-
