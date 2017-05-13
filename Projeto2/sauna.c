@@ -4,23 +4,40 @@
 
 char SAUNA_G; // genero atual da sauna
 int CAPACITY;
-int NUMREQ = 0;
+int OCCUPIED = 0;
 
 // imprimir info do pedido
 
-void printRequestInfo (Request *r)
+// thread principal: sempre que entrar uma pessoa na sauna vai criar uma thread nova 
+// 						arg = tempo
+//						entra: incrementa o numero de lugares
+//						passa o tempo
+//						decrementa quando sai
+
+void thrfunc (void * arg)
 {
-	printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
+	OCCUPIED++;
+	int i = *(int*) arg;
+	i = i*1000;
+	usleep(i);
+	OCCUPIED--;
 }
 
-void putIntoSauna( Request *r)
+void printRequestInfo (Request *r)
 {
+	printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n\n", r->p, r->g, r->t, r->refusedTimes);
+}
+
+void putIntoSauna(Request *r)
+{
+	pthread_t tid;
 	int fd;
-	if(CAPACITY != 0)
+	if(OCCUPIED != CAPACITY)
 	{
 		if(SAUNA_G == r->g)
 		{
 			printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
+			pthread_create(&tid, NULL, thrfunc, (void*) &r->t);
 		}
 		else
 		{
@@ -101,7 +118,7 @@ int main(int argc, char* argv[])
 
   	while(read(fd, r, sizeof(Request)) != 0)
   	{
-  		NUMREQ = NUMREQ+1;
+  		//NUMREQ = NUMREQ+1;
     	if (r == NULL)
     	{
     		printf("Fifo 'tmp/entrada' empty!");
