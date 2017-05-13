@@ -59,37 +59,22 @@ void* thrCreateRequest(void * numRequests)
 }
 
 // THREAD PARA ESCUTAR OS PEDIDOS REJEITADOS
-/*
-void* thrHandlerRejected()
+
+void* thrHandlerRejected(void *arg) //mete um cliente de novo na fila
 {
 	int fd, fd2;
-	Request * r;
+	Request * r = (Request*) arg;
 
 	if ((fd=open(FIFO_2,O_WRONLY)) !=-1)
  		printf("FIFO '/tmp/rejeitados' openned in O_WRONLY mode\n");
  	if ((fd2=open(FIFO_1,O_WRONLY)) !=-1)
  		printf("FIFO '/tmp/entrada' openned in O_WRONLY mode\n");
 
-  	while(read(fd, r, sizeof(Request)) != 0)
-  	{
-    	printf("REJECTED FIFO\nP: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n", r->p, r->g, r->t, r->refusedTimes);
-
-    if (r->refusedTimes < 3)
-    {
     	write(fd2, r, sizeof(*r));  // Volta a colocar na fila, i guess
-    }
-    else if (r->g == 'M') 
-    {
-    	DIS_M++;
-    }
-    else if(r->g == 'F')
-    {
-    	DIS_F++;
-    }
-  }
-  pthread_exit(NULL);
+   
+  	pthread_exit(NULL);
 
-}*/
+}
 
 int main(int argc, char * argv[])
 {

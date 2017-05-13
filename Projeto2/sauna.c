@@ -28,7 +28,7 @@ void printRequestInfo (Request *r)
 	printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n\n", r->p, r->g, r->t, r->refusedTimes);
 }
 
-void putIntoSauna(Request *r)
+/*void putIntoSauna(Request *r)
 {
 	pthread_t tid;
 	int fd;
@@ -53,7 +53,7 @@ void putIntoSauna(Request *r)
 	{
 		printf("FULL!");
 	}
-}
+}*/
 
 /*int numParkingSpaces, openingTime, freeSpaces;*/
 clock_t start;
@@ -85,7 +85,7 @@ int toFile(int tid, int id, char gender, char* message){
 int main(int argc, char* argv[])
 {
 	CAPACITY = atoi(argv[1]); 				// Numero de lugares da sauna
-  	int fd;			
+  	int fd, fd2;			
 
   	Request *r = malloc(sizeof(Request));
 
@@ -116,6 +116,15 @@ int main(int argc, char* argv[])
 		sleep(1); 
   	}
 
+  	while((fd2 = open(FIFO_2, O_WRONLY)) == -1)
+	{
+		if (errno == ENOENT) // no such file or directory //https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html
+		{ 
+			printf("No such file or directory!\n");
+		}
+		sleep(1); 
+  	}
+
   	while(read(fd, r, sizeof(Request)) != 0)
   	{
   		//NUMREQ = NUMREQ+1;
@@ -125,7 +134,10 @@ int main(int argc, char* argv[])
     		exit(1);
     	}
     	printRequestInfo(r);
-    	putIntoSauna(r);
+    	write(fd2, r, sizeof(Request));
+    	//putIntoSauna(r);
+
+
   	}
 
   	SAUNA_G = r->g; 
