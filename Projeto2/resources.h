@@ -13,17 +13,16 @@
 #define TICKS_PER_SEC  60L
 #define NUM_MAX_REQ 100
 
-
 int ID = 1;
 char*  FIFO_1 = "/tmp/entrada";
 char*  FIFO_2 = "/tmp/rejeitados";
 
 typedef struct 
 {
-	int p; 
-	char g;
-	int t;
-	int refusedTimes;
+    int p; 
+    char g;
+    int t;
+    int refusedTimes;
 } Request;
 
-// Vai gerar pedidos aleatorios: ex: 1 F 1 0
+// Vai gerar pedidos aleatórios: ex: 1 F 1 0
