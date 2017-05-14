@@ -54,17 +54,20 @@ void* thrCreateRequest(void * numRequests)
 // cria fifo de entrada 
 
 	if (mkfifo(FIFO_1,0660)<0)
- 		if (errno==EEXIST) 
- 			printf("FIFO '/tmp/entrada' already exists\n");
- 		else 
- 			printf("Can't create FIFO\n");
+	{
+		perror("Can't create FIFO");
+		exit(1);
+	}
 	else 
-		printf("FIFO '/tmp/entrada' sucessfully created\n");
+		printf("FIFO '/tmp/entrada' sucessfully created!\n");
 
 // abre fifo de entrada
 
-	if ((fd=open(FIFO_1,O_WRONLY)) !=-1)
- 		printf("FIFO '/tmp/entrada' openned in O_WRONLY mode\n");
+	if ((fd=open(FIFO_1,O_WRONLY)) ==-1)
+	{
+ 		perror("Can't open FIFO");
+ 		exit(1);
+	}
 
 // geracao de pedidos aleatorios 
 
@@ -123,10 +126,6 @@ void * thrRejectHandler(void * arg)
 		}
 		else
 		{
-			// volta a por na fila
-			// Escrever no fifo de entrada
-			// Todo: open(fifo1)
-			// 		 write(fifo1)
 			write(fd1, r, sizeof(Request));
 			toFile(r, "REJEITADO");
 		}
