@@ -13,7 +13,10 @@ clock_t start;
 Para guardar as estatisticas
 inst – pid – tid – p: g – dur – tip
 */
-int toFile(int tid, int id, char gender, char* message){
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+//inst – pid – tid – p: g – dur – tip
+int toFile(int tid, Request * req, char* message){
 	FILE *f;
 
 	f = fopen(STATISTICS, "a+");
@@ -25,9 +28,9 @@ int toFile(int tid, int id, char gender, char* message){
 
 	clock_t current = times(NULL);
 	clock_t timeDif = (current - start) * TICKS_PER_SEC;
-	int a = times(NULL) * TICKS_PER_SEC;
-
-	fprintf(f, "%d - %d - %d - %d: %c - %f - %s\n", a, getpid(), tid , id, gender, timeDif, message);
+	pthread_mutex_lock(&mutex);
+	fprintf(f, "%li - %d - %d - %d: %c - %d - %s\n", timeDif, getpid(), tid , req->p, req->g, req->t, message);
+	pthread_mutex_unlock(&mutex);
 
 	fclose(f);
 	return 0;
@@ -43,11 +46,16 @@ void * thrfunc (void * arg)
 	Request* r = (Request*) arg;
 	printf("------->>>>>>>Put request in sauna...\n");
 	printRequestInfo(r);
+	pthread_mutex_lock(&mutex);
 	OCCUPIED++;
+	pthread_mutex_unlock(&mutex);
 	int i = *(int*) arg;
 	i = i*1000;
 	usleep(i);
+	pthread_mutex_lock(&mutex);
 	OCCUPIED--;
+	pthread_mutex_unlock(&mutex);
+	return arg;
 }
 
 /**
@@ -98,6 +106,7 @@ void *thrRequestsHandler(void *arg)
 					pthread_t tid;
 					pthread_create(&tid, NULL, thrfunc,(void*)r);
 
+
 				}
 				else // rejeitados
 				{
@@ -120,6 +129,7 @@ void *thrRequestsHandler(void *arg)
 
 		}
 	}
+	pthread_exit(NULL);
 	close(fd1);
 }
 

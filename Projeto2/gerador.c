@@ -5,8 +5,34 @@
 FILE * file;
 int DURATION;
 int DISCARDED = 0;
+clock_t start;
 
 Request* requests[100]; // Lista para pedidos
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+//inst – pid – tid – p: g – dur – tip
+int toFile(Request * req, char* message){
+	FILE *f;
+
+	f = fopen(LOG_FILE, "a+");
+
+	if (f == NULL)
+	{
+		printf("\nError opening file %s.", LOG_FILE);
+		return -1;
+	}
+
+	clock_t current = times(NULL);
+	clock_t timeDif = (current - start) * TICKS_PER_SEC;
+
+	pthread_mutex_lock(&mutex);
+	fprintf(f, "%li - %d - %d: %c - %d - %s\n", timeDif, getpid(), req->p, req->g, req->t, message);
+	pthread_mutex_unlock(&mutex);
+
+	fclose(f);
+	return 0;
+}
 
 /**
 Esta thread sera responsavel por efectuar a geração aleatoria de pedidos e
@@ -76,27 +102,20 @@ no caso de ser igual a 3, descarta o pedido!
 
 void * thrRejectHandler(void * arg)
 {
-	int fd;
+	int fd, fd1;
 	Request * r = malloc(sizeof(Request));
 
-	while((fd = open(FIFO_2, O_RDONLY)) == -1)
-	{
-		if (errno == ENOENT) // no such file or directory //https://www.gnu.org/software/libc/manual/html_node/Error-Codes.html
-		{	 
-			printf("No such file or directory!\n");
-		}
-		sleep(1); 
-	}
+	if ((fd=open(FIFO_2,O_RDONLY)) !=-1)
+ 		printf("FIFO '/tmp/rejeitados' openned in O_RDONLY mode\n");
+ 	
+ 	if ((fd1=open(FIFO_1,O_WRONLY)) !=-1)
+ 		printf("FIFO '/tmp/entrada' openned in O_WRONLY mode\n");
 
 	while(read(fd, r, sizeof(Request)) != 0)
 	{
-		printf("numRequest: %d\nGender: %c\nDuration: %d\nRefusedTimes: %d\n\n", r->p, r->g, r->t, r->refusedTimes);
-		//NUMREQ = NUMREQ+1;
-		if (r == NULL)
-		{
-			printf("Fifo 'tmp/rejeitados' empty!");
-			exit(1);
-		}
+		printf("REJEITADO:\n");
+		printRequestInfo (r);
+
 		if(r->refusedTimes >= 3)
 		{
 			// descarta
@@ -108,9 +127,12 @@ void * thrRejectHandler(void * arg)
 			// Escrever no fifo de entrada
 			// Todo: open(fifo1)
 			// 		 write(fifo1)
+			write(fd1, r, sizeof(Request));
 		}
 	}
 	close(fd);
+	close(fd1);
+	return arg;
 }
 
 /**
@@ -140,7 +162,7 @@ int main(int argc, char * argv[])
 	pthread_join(tid1,NULL);
 	pthread_join(tid2, NULL);
 
-	return 0;
+	pthread_exit(NULL);
 
 }
 
