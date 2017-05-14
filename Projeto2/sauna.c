@@ -129,7 +129,9 @@ void *thrRequestsHandler(void *arg)
 						}
 
 					r->refusedTimes++;
+					pthread_mutex_lock(&mutex);
 					write(fd2, r, sizeof(Request)); // escrever nos rejeitados
+					pthread_mutex_lock(&mutex);
 					toFile(TID, r, "REJEITADO");
 					close(fd2);
 				}

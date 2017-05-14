@@ -102,7 +102,9 @@ void* thrCreateRequest(void * numRequests)
 	  {
 	  	NUMREQ_M++;
 	  }
+	  pthread_mutex_lock(&mutex);
 	  write(fd,r,sizeof(Request)); //Escrever no fifo
+	  pthread_mutex_unlock(&mutex);
 	}
 
 	close(fd);
@@ -154,7 +156,9 @@ void * thrRejectHandler(void * arg)
 			{
 				NUMREJ_M++;
 			}
+			pthread_mutex_lock(&mutex);
 			write(fd1, r, sizeof(Request));
+			pthread_mutex_unlock(&mutex);
 			toFile(r, "REJEITADO");
 		}
 
