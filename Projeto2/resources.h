@@ -14,7 +14,6 @@
 #include <string.h>
 
 #define TICKS_PER_SEC  60L
-#define NUM_MAX_REQ 100
 
 
 int ID = 1;

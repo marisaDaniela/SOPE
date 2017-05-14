@@ -3,6 +3,7 @@
 char SAUNA_G; // genero atual da sauna
 int CAPACITY;
 int OCCUPIED = 0;
+int TID;
 
 int fd1, fd2; // descritores para os fifos
 clock_t start;
@@ -61,6 +62,7 @@ void * thrfunc (void * arg)
 	pthread_mutex_lock(&mutex);
 	OCCUPIED--;
 	pthread_mutex_unlock(&mutex);
+	toFile(TID,r, "SERVIDO");
 	return arg;
 }
 
@@ -110,6 +112,7 @@ void *thrRequestsHandler(void *arg)
 					
 					// criar a thread para por na sauna
 					pthread_t tid;
+					TID = tid;
 					toFile(tid, r, "RECEBIDO");
 					pthread_create(&tid, NULL, thrfunc,(void*)r);
 
@@ -125,6 +128,7 @@ void *thrRequestsHandler(void *arg)
 
 					r->refusedTimes++;
 					write(fd2, r, sizeof(Request)); // escrever nos rejeitados
+					toFile(TID, r, "REJEITADO");
 					close(fd2);
 				}
 			}
@@ -143,14 +147,16 @@ void *thrRequestsHandler(void *arg)
 
 int main(int argc, char* argv[])
 {
+	if(argc != 2)
+	{
+	  	printf("Wrong number of arguments! Usage: %s <(int)capacity>\n", argv[0]);
+	  	exit(1);
+	}
+
 	CAPACITY = atoi(argv[1]); 				// Numero de lugares da sauna
 	SAUNA_G = 'A'; 							// caracter para identificar que a sauna esta vazia
 
-	if(argc != 2)
-	{
-	  	printf("Wrong number of arguments! Usage: %s <capacity>\n", argv[0]);
-	  	exit(1);
-	}
+	
 
 	pthread_t tid;
 

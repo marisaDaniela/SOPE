@@ -119,6 +119,7 @@ void * thrRejectHandler(void * arg)
 		{
 			// descarta
 			DISCARDED++;
+			toFile(r, "DESCARTADO");
 		}
 		else
 		{
@@ -127,7 +128,9 @@ void * thrRejectHandler(void * arg)
 			// Todo: open(fifo1)
 			// 		 write(fifo1)
 			write(fd1, r, sizeof(Request));
+			toFile(r, "REJEITADO");
 		}
+
 	}
 	close(fd);
 	close(fd1);
@@ -140,18 +143,19 @@ Main function: responsavel por criar as threads
 */
 int main(int argc, char * argv[])
 {
+	if(argc != 3)
+  	{
+   		printf("Wrong number of arguments! Usage: %s <(int)number of requests> <(int)max duration>\n", argv[0]);
+    	exit(1);
+  	}
+	
 	int numRequests = atoi(argv[1]); // numero de pedidos
 	DURATION = atoi(argv[2]); // duracao maxima
 
 	time_t t;
   	srand((unsigned) time(&t)); // por causa da cena random
 
-  	if(argc != 3)
-  	{
-   		printf("Wrong number of arguments! Usage: %s <number of requests> <max duration>\n", argv[0]);
-    	exit(1);
-  	}
-	
+  	
 
 	pthread_t tid1, tid2;
 
