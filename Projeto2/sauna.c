@@ -7,6 +7,8 @@ int TID;
 
 int fd1, fd2; // descritores para os fifos
 clock_t start;
+int NUMREQ_F, NUMREQ_M, NUMREJ_F, NUMREJ_M, NUMREC_F, NUMREC_M;
+
 
 /**
 Para guardar as estatisticas
@@ -89,7 +91,7 @@ void *thrRequestsHandler(void *arg)
 	else 
 		printf("FIFO '/tmp/rejeitados' sucessfully created\n");
 
-	while(1) 
+	while(1)  //
 	{
 
 		Request *r = malloc(sizeof(Request));
@@ -101,7 +103,7 @@ void *thrRequestsHandler(void *arg)
 				printf("Fifo 'tmp/entrada' empty!");
 				exit(1);
 			}
-			printf("Imprime pedidos todos:\n");
+			//printf("Imprime pedidos todos:\n");
 			printRequestInfo(r);
 			
 			if(OCCUPIED < CAPACITY) // Enquanto houver lugares livres

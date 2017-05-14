@@ -4,6 +4,7 @@ FILE * file;
 int DURATION;
 int DISCARDED = 0;
 clock_t start;
+int NUMREQ_F, NUMREQ_M, NUMREJ_F, NUMREJ_M, NUMDIS_M, NUMDIS_F;
 
 Request* requests[100]; // Lista para pedidos
 
@@ -55,11 +56,15 @@ void* thrCreateRequest(void * numRequests)
 
 	if (mkfifo(FIFO_1,0660)<0)
 	{
-		perror("Can't create FIFO");
-		exit(1);
-	}
+ 		if (errno==EEXIST) 
+ 			printf("FIFO '/tmp/entrada' already exists\n");
+ 		else 
+ 			printf("Can't create FIFO\n");
+ 		//unlink(FIFO_1);
+ 		//free(numRequests);
+ 	}
 	else 
-		printf("FIFO '/tmp/entrada' sucessfully created!\n");
+		printf("FIFO '/tmp/entrada' sucessfully created\n");
 
 // abre fifo de entrada
 
@@ -89,7 +94,15 @@ void* thrCreateRequest(void * numRequests)
 	for(int i = 0; i < num; i++)
 	{
 	  Request *r = requests[i];
-	  write(fd,r,sizeof(*r)); //Escrever no fifo
+	  if(r->g == 'F')
+	  {
+	  	NUMREQ_F++;
+	  }
+	  else
+	  {
+	  	NUMREQ_M++;
+	  }
+	  write(fd,r,sizeof(Request)); //Escrever no fifo
 	}
 
 	close(fd);
@@ -120,12 +133,27 @@ void * thrRejectHandler(void * arg)
 
 		if(r->refusedTimes >= 3)
 		{
-			// descarta
-			DISCARDED++;
+			// Se for rapariga, NUMDIS_F ++
+			if(r->g == 'F')
+			{
+				NUMDIS_F++;
+			}
+			else
+			{
+				NUMDIS_M++;
+			}
 			toFile(r, "DESCARTADO");
 		}
 		else
 		{
+			if(r->g == 'F')
+			{
+				NUMREJ_F++;
+			}
+			else
+			{
+				NUMREJ_M++;
+			}
 			write(fd1, r, sizeof(Request));
 			toFile(r, "REJEITADO");
 		}
@@ -153,8 +181,6 @@ int main(int argc, char * argv[])
 
 	time_t t;
   	srand((unsigned) time(&t)); // por causa da cena random
-
-  	
 
 	pthread_t tid1, tid2;
 
