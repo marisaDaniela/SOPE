@@ -1,7 +1,5 @@
 #include "resources.h"
 
-#define STATISTICS "/tmp/bal.pid"
-
 char SAUNA_G; // genero atual da sauna
 int CAPACITY;
 int OCCUPIED = 0;
@@ -16,13 +14,21 @@ inst – pid – tid – p: g – dur – tip
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 //inst – pid – tid – p: g – dur – tip
-int toFile(int tid, Request * req, char* message){
-	FILE *f;
+int toFile(int tid, Request * req, char* message)
+{
+	char LOG_FILE[] = "/tmp/bal.";
+	int a = getpid();
+	char b[sizeof(a)];
 
-	f = fopen(STATISTICS, "a+");
+	sprintf(b, "%d", a);
+
+	FILE *f;
+	strcat(LOG_FILE, b);
+
+	f = fopen(LOG_FILE, "a+");
 
 	if (f == NULL){
-		printf("\nError opening file %s.", STATISTICS);
+		printf("\nError opening file %s!", LOG_FILE);
 		return -1;
 	}
 
@@ -104,6 +110,7 @@ void *thrRequestsHandler(void *arg)
 					
 					// criar a thread para por na sauna
 					pthread_t tid;
+					toFile(tid, r, "RECEBIDO");
 					pthread_create(&tid, NULL, thrfunc,(void*)r);
 
 

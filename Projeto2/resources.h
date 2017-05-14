@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <sys/sem.h>
+#include <string.h>
 
 #define TICKS_PER_SEC  60L
 #define NUM_MAX_REQ 100

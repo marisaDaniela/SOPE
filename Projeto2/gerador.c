@@ -1,7 +1,5 @@
 #include "resources.h"
 
-#define LOG_FILE  "/tmp/ger.pid"
-
 FILE * file;
 int DURATION;
 int DISCARDED = 0;
@@ -12,8 +10,16 @@ Request* requests[100]; // Lista para pedidos
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 //inst – pid – tid – p: g – dur – tip
-int toFile(Request * req, char* message){
+int toFile(Request * req, char* message)
+{
+	char LOG_FILE[] = "/tmp/ger.";
+	int a = getpid();
+	char b[sizeof(a)];
+
+	sprintf(b, "%d", a);
+
 	FILE *f;
+	strcat(LOG_FILE, b);
 
 	f = fopen(LOG_FILE, "a+");
 
@@ -27,7 +33,7 @@ int toFile(Request * req, char* message){
 	clock_t timeDif = (current - start) * TICKS_PER_SEC;
 
 	pthread_mutex_lock(&mutex);
-	fprintf(f, "%li - %d - %d: %c - %d - %s\n", timeDif, getpid(), req->p, req->g, req->t, message);
+	fprintf(f, "%li - %d - %d: %c - %d - %s\n", timeDif, a, req->p, req->g, req->t, message);
 	pthread_mutex_unlock(&mutex);
 
 	fclose(f);
@@ -38,20 +44,12 @@ int toFile(Request * req, char* message){
 Esta thread sera responsavel por efectuar a geração aleatoria de pedidos e
 apresenta-los a sauna;
 */
+
 void* thrCreateRequest(void * numRequests)
 {
 	int num = *(int*) numRequests;
 
 	int fd; // descritor para o fifo
-
-// Create log file (inacabado!)
-
-	file = fopen(LOG_FILE,"w");
-	if (file == NULL)
-		printf ("Couldn't create %s file\n", LOG_FILE);
-	else
-		fprintf(file,"   inst   –   pid    –     p:    g     –    dur    –    tip   \n");
-	fclose(file);
 
 // cria fifo de entrada 
 
@@ -80,6 +78,7 @@ void* thrCreateRequest(void * numRequests)
 		person->refusedTimes = 0;
 
 		requests[i] = person;
+		toFile(person, "PEDIDO");
 	}
 
 // colocar os pedidos no fifo de entrada
