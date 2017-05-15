@@ -1,0 +1,15 @@
+.COMANDO DE INVOCAÇÃO:
+
+ sauna <n. lugares> 
+
+em que, 
+ <n. lugares> é o número de lugares que podem ser ocupados ao mesmo tempo por utilizadores do mesmo género.
+
+.INFORMAÇÃO DA SAÍDA PADRÃO:
+
+- Durante a execução do programa, o programa sauna é responsável pela emissão de mensagens de registo para um ficheiro, que documentam o desenrolar da atividade, respeitando o formato constante no enunciado do trabalho.
+- No final e antes de terminar são apresentadas, através da saída padrão, informações estatísticas que indicam o número de pedidos recebidos (total e por género), o número de rejeições (total e por género) e o número de pedidos servidos (total e por género).
+
+.REGISTOS:
+ 
+ /tmp/bal.pid (em que pid é o identificador do processo)

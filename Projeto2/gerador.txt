@@ -1,0 +1,20 @@
+.COMANDO DE INVOCAÇÃO:
+
+ gerador <n. pedidos> <max. utilização>
+
+em que, 
+ <n. pedidos> é o número total de pedidos gerados aleatoriamente ao longo da execução do programa;
+ <max. utilização> é o tempo máximo de duração, em milisegundos, de cada pedido de utilização da sauna.
+
+.INFORMAÇÃO DA SAÍDA PADRÃO:
+
+- Durante a execução do programa, o programa gerador é responsável pela emissão de mensagens de registo (pedidos de utilização da sauna) para um ficheiro, que documentam o desenrolar da atividade, respeitando o formato constante no enunciado do trabalho.
+- No final e antes de terminar são apresentadas, através da saída padrão, informações estatísticas relevantes que indicam o número de pedidos gerados (total e por género), o número de rejeições recebidas (total e por género) e o número de rejeições descartadas (total e por género).
+
+.REGISTOS:
+ 
+ /tmp/ger.pid (em que pid é o identificador do processo)
+
+
+
+

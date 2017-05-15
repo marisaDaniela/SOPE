@@ -1,0 +1,13 @@
+UC - Sistemas Operativos - 2016/17 
+
+.ELEMENTOS DO GRUPO:
+
+- Cláudia Raquel Amaral Conde Guedes (up201505409)
+- Filipe Miguel Alves Pinto dos Reis (up201506154)
+- Marisa Daniela Quintal Oliveira (up201308594)
+
+.RACE CONDITIONS:
+
+- Uma race condition ocorre quando duas ou mais threads podem aceder a dados partilhados e tentam alterá-los simultaneamente.
+- No desenvolvimento do projeto, tendo em conta as possíveis situações de competição no acesso a elementos partilhados por parte das diferentes threads, optou-se pela utilização de um mutex. No sentido de prevenir a ocorrência de race conditions, recorreu-se ao mecanismo de locking, de modo a garantir o acesso aos dados partilhados por apenas uma thread num determinado momento.
+- Assim, garantiu-se que as variáveis relativas à sauna como, por exemplo, o género atual e o número de lugares ocupados não fossem alteradas simultaneamente, evitanto consequências indesejadas.  

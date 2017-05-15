@@ -53,7 +53,7 @@ Responsavel por enviar uma notificaçao a thread principal quando o tempo do ped
 void * thrfunc (void * arg)
 {
 	Request* r = (Request*) arg;
-	printf("------->>>>>>>Put request in sauna...\n");
+	printf(">>>>>>>>> Going to sauna...\n");
 	printRequestInfo(r);
 	pthread_mutex_lock(&mutex);
 	OCCUPIED++;
@@ -103,13 +103,29 @@ void *thrRequestsHandler(void *arg)
 				printf("Fifo 'tmp/entrada' empty!");
 				exit(1);
 			}
+			if(r->g == 'F')
+			{
+				NUMREQ_F++;
+			}
+			else if(r->g == 'M')
+			{
+				NUMREQ_M++;
+			}
 			//printf("Imprime pedidos todos:\n");
-			printRequestInfo(r);
+			printRequestInfo(r); //just to see
 			
 			if(OCCUPIED < CAPACITY) // Enquanto houver lugares livres
 			{
 				if((r->g == SAUNA_G) || (SAUNA_G == 'A')) // Se for do mesmo sexo ou sauna vazia 
 				{
+					if(r->g == 'F')
+					{
+						NUMREC_F++;
+					}
+					else if(r->g == 'M')
+					{
+						NUMREQ_M++;
+					}
 					SAUNA_G = r->g; // atualiza genero da sauna
 					
 					// criar a thread para por na sauna
@@ -128,10 +144,19 @@ void *thrRequestsHandler(void *arg)
 				  			printf("FIFO '/tmp/rejeitados' openned in O_WRDONLY mode\n");
 						}
 
+
 					r->refusedTimes++;
-					pthread_mutex_lock(&mutex);
+					//pthread_mutex_lock(&mutex);
 					write(fd2, r, sizeof(Request)); // escrever nos rejeitados
-					pthread_mutex_lock(&mutex);
+					//pthread_mutex_lock(&mutex);
+					if(r->g == 'F')
+					{
+						NUMREJ_F++;
+					}
+					else if(r->g == 'M')
+					{
+						NUMREJ_M++;
+					}
 					toFile(TID, r, "REJEITADO");
 					close(fd2);
 				}
@@ -139,7 +164,8 @@ void *thrRequestsHandler(void *arg)
 			else
 			{
 				// sauna full (wait?)
-				printf("Sauna full\n");
+				printf("Sauna full!!\n");
+				sleep(3);
 			}
 
 		}
@@ -148,7 +174,13 @@ void *thrRequestsHandler(void *arg)
 	close(fd1);
 }
 
+// Para imprimir as estatisticas envia um sinal
 
+void sig_handler(int signo)
+{
+	printf("\nSTATISTICS:\n\nFemale requests: %d\nMale requests: %d\nFemale rejected: %d\nMale rejected: %d\nFemale received: %d\nMale received: %d\n",NUMREQ_F, NUMREQ_M, NUMREJ_F, NUMREJ_M, NUMREC_M, NUMREC_F);
+	exit(0);
+}
 int main(int argc, char* argv[])
 {
 	if(argc != 2)
@@ -159,7 +191,8 @@ int main(int argc, char* argv[])
 
 	CAPACITY = atoi(argv[1]); 				// Numero de lugares da sauna
 	SAUNA_G = 'A'; 							// caracter para identificar que a sauna esta vazia
-
+	if (signal(SIGINT, sig_handler) == SIG_ERR)
+        printf("\ncan't catch SIGKILL\n");
 	
 
 	pthread_t tid;

@@ -8,10 +8,10 @@
 #include <time.h>
 #include <sys/times.h>
 #include <errno.h>
-#include <pthread.h>
 #include <semaphore.h>
 #include <sys/sem.h>
 #include <string.h>
+#include <signal.h>
 
 #define TICKS_PER_SEC  60L
 

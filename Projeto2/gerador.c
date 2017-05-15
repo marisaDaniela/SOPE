@@ -135,7 +135,6 @@ void * thrRejectHandler(void * arg)
 
 		if(r->refusedTimes >= 3)
 		{
-			// Se for rapariga, NUMDIS_F ++
 			if(r->g == 'F')
 			{
 				NUMDIS_F++;
@@ -193,6 +192,9 @@ int main(int argc, char * argv[])
 
 	pthread_join(tid1,NULL);
 	pthread_join(tid2, NULL);
+
+	//int NUMREQ_F, NUMREQ_M, NUMREJ_F, NUMREJ_M, NUMDIS_M, NUMDIS_F;
+	printf("\nSTATISTICS:\n\nFemale requests: %d\nMale requests: %d\nFemale rejected: %d\nMale rejected: %d\nFemale discarded: %d\nMale discarded: %d\n",NUMREQ_F, NUMREQ_M, NUMREJ_F, NUMREJ_M, NUMDIS_M, NUMDIS_F);
 
 	pthread_exit(NULL);
 
